@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src blob: data:; worker-src blob:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Inspect embedded scene text in a PNG and remove text metadata without re-encoding its image data. A local, open-source tool.">
+  <meta name="theme-color" content="#eef4f6">
+  <title>PNG Share Check | See what your PNG carries</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23145d80'/%3E%3Cpath d='M10 10h14l6 6v14H10z' stroke='white' stroke-width='2' fill='none'/%3E%3Cpath d='M15 22h10m-10 5h6' stroke='%23b9e0f2' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="png-core.js" defer></script>
+  <script src="samples/demo.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./"><svg viewBox="0 0 36 40" aria-hidden="true"><path d="M3 2h21l9 9v27H3z"/><path d="M23 2v10h10M10 23h16M10 29h10"/></svg><span>PNG Share Check<small data-i18n="brandNote">By LydiaTools</small></span></a>
+    <nav aria-label="Main"><a href="https://github.com/LydiaTools/png-share-check" target="_blank" rel="noopener noreferrer">GitHub</a><button id="language" class="quiet" type="button" aria-label="Switch to Chinese">中文</button></nav>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="headline">
+      <div><h1 id="headline" data-i18n="headline">See what your PNG carries.</h1><p data-i18n="intro">A diagram can keep its editable scene inside the image. Read the stored text before you share it.</p></div>
+      <div class="local-note"><span class="local-dot" aria-hidden="true"></span><span data-i18n="local">Files stay in this tab.<br>No upload. No account.</span></div>
+    </section>
+    <section id="dropzone" class="inputbar" aria-label="Open a PNG">
+      <div class="input-actions"><button id="open" class="primary" type="button" data-i18n="open">Open a PNG</button><input type="file" id="file" accept="image/png,.png" hidden><button id="demo" class="secondary" type="button" data-i18n="demo">Try the demo PNG</button></div>
+      <p data-i18n="drop">Or drop one here. Static PNG · up to 12 MiB / 12 MP</p>
+    </section>
+    <p id="status" role="status" aria-live="polite">Start with your PNG, or inspect the synthetic demo.</p>
+    <section class="bench" aria-label="PNG inspection">
+      <div class="picture-panel">
+        <div class="panel-title"><h2 data-i18n="visible">Visible image</h2><span id="dimensions"></span></div>
+        <div id="preview" class="preview">
+          <div id="empty" class="empty"><div class="png-sheet" aria-hidden="true"><span>PNG</span><i></i><i></i></div><p data-i18n="empty">Your image goes here.<br>Its stored text appears next door.</p></div>
+          <img id="image" hidden alt="">
+        </div>
+        <div class="preview-footer"><span id="filename" data-i18n="noFile">No file selected</span><button id="forget" class="text-button" type="button" hidden data-i18n="forget">Clear file</button></div>
+        <p class="pixel-note" data-i18n="pixels">Review the visible image too. Text and objects drawn into the pixels are not removed.</p>
+      </div>
+      <div class="data-panel">
+        <div class="panel-title"><h2 data-i18n="stored">Stored data</h2><span id="summary" class="count" data-i18n="waiting">Waiting for PNG</span></div>
+        <div id="tabs" class="tabs" role="group" aria-label="Choose file version" hidden><button id="original-tab" type="button" aria-pressed="true" data-i18n="original">Original</button><button id="clean-tab" type="button" aria-pressed="false" disabled data-i18n="cleaned">Cleaned copy</button></div>
+        <div id="findings" class="findings"><p class="placeholder" data-i18n="findingsEmpty">The preview checks PNG text chunks and EXIF, and reads supported Excalidraw scenes.</p></div>
+        <div id="actions" class="actions" hidden>
+          <button id="clean" class="primary" type="button" data-i18n="clean">Remove text metadata</button>
+          <button id="download" class="primary" type="button" hidden data-i18n="download">Download cleaned PNG</button>
+          <button id="report" class="text-button" type="button" hidden data-i18n="report">Download verification report</button>
+          <p data-i18n="scope">Removes text chunks, EXIF and trailing bytes. Other chunks and visible pixels remain.</p>
+        </div>
+      </div>
+    </section>
+    <details id="proof" class="proof" hidden><summary data-i18n="proof">What changed? Inspect the byte-level proof</summary><div id="proof-body"></div></details>
+    <details class="explanation"><summary data-i18n="what">Why can an image contain an editable scene?</summary><div><p data-i18n="explanation">Some diagram editors offer an option to embed editing data in PNG exports. That lets you reopen and edit the drawing. It can include text beyond the visible export. Embedding is useful; inspect it when you intend to share pixels only.</p><p><a href="https://docs.excalidraw.com/docs/@excalidraw/excalidraw/api/utils/export" target="_blank" rel="noopener noreferrer" data-i18n="docs">Excalidraw export documentation</a></p><p data-i18n="limits">This preview is not a full PNG validator, a sensitive-data detector or a privacy certificate. It does not inspect pixel content, other editing formats or every ancillary chunk. Keep your editable original if you need it later.</p></div></details>
+  </main>
+  <footer><span data-i18n="footer">Open source. Works offline. No AI needed.</span><a href="https://github.com/LydiaTools" target="_blank" rel="noopener noreferrer" data-i18n="more">More tools by Lydia</a></footer>
+</body>
+</html>
