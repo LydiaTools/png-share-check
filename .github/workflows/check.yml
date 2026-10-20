@@ -15,6 +15,11 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+      - run: node scripts/package.cjs
+      - run: npm run test:browser
+        env:
+          PNG_CHECK_APP_ROOT: dist
+          PNG_CHECK_RUN_DIR: runs/packaged
       - uses: actions/upload-artifact@v4
         if: always()
         with:

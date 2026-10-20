@@ -7,8 +7,9 @@ const { pathToFileURL } = require('node:url');
 const { chromium } = require('playwright');
 const make = require('../scripts/make-samples.cjs');
 const core = require('../png-core.js')();
-const root = path.resolve(__dirname, '..');
-const run = process.env.PNG_CHECK_RUN_DIR || path.join(root, 'runs');
+const sourceRoot = path.resolve(__dirname, '..');
+const root = process.env.PNG_CHECK_APP_ROOT ? path.resolve(process.env.PNG_CHECK_APP_ROOT) : sourceRoot;
+const run = process.env.PNG_CHECK_RUN_DIR ? path.resolve(process.env.PNG_CHECK_RUN_DIR) : path.join(sourceRoot, 'runs');
 fs.mkdirSync(run, { recursive: true });
 const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.png':'image/png' };
 const server = http.createServer((req, res) => {
