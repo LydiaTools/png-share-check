@@ -18,11 +18,19 @@ PNG text values, filenames and scenes are untrusted. They are assigned with `tex
 
 ## Cleaning and proof
 
-Cleaning removes all `tEXt`, `zTXt`, `iTXt` and `eXIf` chunks, and all bytes after the first valid IEND. It does not selectively remove one field, preserve author credit inside those chunks or edit a scene. The new filename ends in `-without-text.png`; the original is not overwritten.
+Default cleaning removes all `tEXt`, `zTXt`, `iTXt` chunks and all bytes after the first valid IEND. EXIF is retained by default, including orientation and any other information it contains. Selecting **Also remove EXIF** removes all `eXIf` chunks too. It does not selectively remove EXIF fields, preserve author credit inside removed chunks or edit a scene. The new filename ends in `-without-text.png`; the original is not overwritten.
 
 Every retained chunk is copied exactly. Color/profile chunks such as `iCCP`, `sRGB`, `gAMA` and `cHRM` remain, as do unknown ancillary chunks, which are disclosed. These may contain additional data; “no targeted metadata found” does **not** mean the file carries no other information. Visible pixels can contain text, QR codes, watermarks or other information and are unchanged.
 
-The cleaned file is re-inspected. The concatenated IDAT payloads must have matching SHA-256 before a copy is offered. This shows the compressed image data was retained; it is not a privacy certificate. Whole-file hashes distinguish the actual original and output.
+The cleaned file is re-inspected. The concatenated IDAT payloads must have matching SHA-256 before a copy is offered. This proves the compressed image data was retained. It does not prove every viewer will display the same orientation if EXIF is removed, or certify privacy. Whole-file hashes distinguish the actual original and output. The report states the EXIF choice and retained EXIF count; it never silently describes retained EXIF as removed.
+
+### Why EXIF removal is optional
+
+An original synthetic PNG with valid EXIF orientation 6 reproduced a v0.1.0 issue in Chromium 151: displayed dimensions changed from 600×960 to 960×600 after automatic EXIF removal, although IDAT hashes matched. The control with orientation 1 stayed unchanged. [Original reproduction run](https://github.com/LydiaTools/png-share-check/actions/runs/39472015280).
+
+v0.1.1 keeps EXIF by default. The regression suite covers all eight orientations, both little- and big-endian TIFF profiles, text removal, the retained count in the report, changing the choice after cleaning, and an explicit EXIF-removal download. Opting into removal can rotate or mirror the display; the app shows a notice and lets the user compare both previews. It does not re-encode pixels to compensate for EXIF removal.
+
+This is a case where a matching compressed-data hash is narrower evidence than a matching rendered picture. [PNG eXIf definition](https://www.w3.org/TR/png-3/#11eXIf).
 
 The JSON report contains counts, sizes, chunk types and hashes; no filenames, keyword names, scene text or metadata values. Hashes identify files and can still be correlatable; review the report before sharing it.
 

@@ -1,10 +1,12 @@
 {
   "name": "png-share-check",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Inspect editable scene data in PNG exports and remove text metadata without re-encoding pixels.",
   "license": "MIT",
   "engines": { "node": ">=22" },
   "scripts": { "test": "node --test tests/core.test.cjs", "test:browser": "node tests/browser.cjs", "samples": "node scripts/make-samples.cjs" },
-  "devDependencies": { "playwright": "1.62.1" }
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
 }

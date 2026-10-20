@@ -22,11 +22,26 @@ test('text formats, UTF-8, EXIF and trailing data are removed without re-encodin
   png = make.insert(png, 'iTXt', Buffer.concat([Buffer.from('Title\0\x01\0\0\0'), zlib.deflateSync(Buffer.from('Unicode 数据')) ]));
   png = make.insert(png, 'eXIf', Buffer.from('synthetic-exif'));
   png = Buffer.concat([png, Buffer.from('trailing synthetic bytes')]);
-  const r = await core.clean(png);
+  const r = await core.clean(png, { removeExif:true });
   assert.deepEqual(r.before.metadata.map(m=>m.preview), ['Demo', 'Compressed note', '示例 ✓', 'Unicode 数据']);
   assert.equal(r.after.textCount, 0); assert.equal(r.after.exifCount, 0); assert.equal(r.after.trailingBytes, 0);
   assert.equal(r.before.imageDataHash, r.after.imageDataHash); assert.deepEqual(Buffer.from(r.bytes), base);
   assert.equal(core.report(r).imageDataUnchanged, true);
+  assert.equal(core.report(r).choices.removeExif, true);
+});
+test('EXIF is retained by default while text is removed; report states that choice', async () => {
+  const exif = make.insert(base, 'eXIf', make.exifOrientationPayload(6));
+  const original = make.insert(exif, 'tEXt', Buffer.from('Comment\0Synthetic note'));
+  const result = await core.clean(original);
+  assert.deepEqual(Buffer.from(result.bytes), exif);
+  assert.equal(result.after.exifCount, 1); assert.equal(result.after.textCount, 0);
+  assert.deepEqual(result.removedChunks, ['tEXt']); assert.equal(result.removeExif, false);
+  const report = core.report(result); assert.equal(report.choices.removeExif, false); assert.equal(report.after.exifChunks, 1);
+  assert.ok(result.before.chunks.find(c=>c.type==='eXIf').removedByCleaning === false);
+});
+test('a non-boolean EXIF choice is rejected instead of becoming an accidental removal', async () => {
+  await assert.rejects(core.clean(base, {removeExif:'false'}), /choices/);
+  await assert.rejects(core.clean(base, null), /choices/);
 });
 test('color chunks and unknown ancillary data are preserved and disclosed', async () => {
   const png = make.insert(make.insert(base, 'gAMA', Buffer.from([0,0,177,143])), 'vpAg', Buffer.from('retained data'));

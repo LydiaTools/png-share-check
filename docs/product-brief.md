@@ -1,7 +1,7 @@
 # PNG Share Check: bounded prototype
 
 Audience: people sharing diagram PNGs in documentation, GitHub issues and social posts.
-Task: inspect what a PNG stores beyond visible pixels, then remove its text/EXIF metadata and trailing bytes while retaining image chunks.
+Task: inspect what a PNG stores beyond visible pixels, then remove text metadata and trailing bytes while retaining image chunks. EXIF stays by default; removing it is an explicit choice because it can affect display orientation.
 
 Input: one static PNG, up to 12 MiB and 12 megapixels. Automatic work: validate chunk framing/CRCs, decode bounded text chunks and supported Excalidraw scene envelopes, show stored text and metadata, create a cleaned copy, re-inspect it and compare IDAT hashes. User judgment: review the visible pixels and decide what to share. There is no private-content detector or privacy certification.
 

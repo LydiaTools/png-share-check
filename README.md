@@ -17,6 +17,8 @@ The demo image says “Draft” and “Share.” Its embedded scene also contain
 3. Select **Remove text metadata**, then **Download cleaned PNG**.
 4. Open the verification details or download a report. Reopen the cleaned image to inspect it again.
 
+EXIF is retained by default, including its orientation and any other information. If your file has EXIF, **Also remove EXIF** is an explicit choice. Removing it can rotate or mirror the displayed picture; compare the original and cleaned previews before sharing.
+
 No sign-up, API key, AI model or build step. Image processing runs in your tab. The app contains no analytics or upload endpoint. The hosted page still loads its static files from GitHub Pages; use the offline ZIP if you want to disconnect completely.
 
 ## What it does
@@ -25,8 +27,8 @@ No sign-up, API key, AI model or build step. Image processing runs in your tab. 
 | --- | --- |
 | Inspect text metadata | Reads bounded `tEXt`, `zTXt` and `iTXt` entries. |
 | Inspect editable drawings | Decodes legacy and supported byte-string Excalidraw scene envelopes; shows stored text elements. |
-| Remove targeted data | Removes **all** `tEXt`, `zTXt`, `iTXt`, `eXIf` chunks and bytes after `IEND`. |
-| Preserve the image | Retains other chunks exactly, including `IDAT` and color-related chunks. No canvas re-encoding. |
+| Remove text metadata | Removes **all** `tEXt`, `zTXt`, `iTXt` chunks and bytes after `IEND`. EXIF removal is optional. |
+| Keep compressed image data | Retains `IDAT` and other unselected chunks exactly, including color profiles and EXIF by default. No canvas re-encoding. |
 | Verify the copy | Re-inspects it, compares SHA-256 of concatenated `IDAT` payloads, and offers a report without filenames or metadata values. |
 | Work offline | Download the release ZIP, unzip it, and open `index.html`. English and Chinese are included. |
 
@@ -34,9 +36,9 @@ Excalidraw's “embed scene” option is a documented editing feature and is off
 
 ## Scope you can check
 
-**v0.1.0 is an early preview.** It accepts one static PNG up to 12 MiB and 12 megapixels. It checks chunk framing, CRCs and selected structural fields; it is not a complete PNG conformance validator. Animated PNG is rejected.
+**v0.1.1 is an early preview.** It accepts one static PNG up to 12 MiB and 12 megapixels. It checks chunk framing, CRCs and selected structural fields; it is not a complete PNG conformance validator. Animated PNG is rejected.
 
-Cleaning removes the listed chunks regardless of their meaning. This includes useful editing data, authorship and other provenance. Keep your editable original. It does not redact visible text, inspect every ancillary chunk, detect sensitive information, understand every editor's format or certify a file as private. Unknown ancillary chunks are retained and disclosed. Some color/profile chunks can themselves contain descriptive data and are also retained.
+Cleaning removes the selected chunk types regardless of their meaning. This includes useful editing data, authorship and other provenance. Keep your editable original. EXIF stays unless you select its removal; it may contain information besides orientation. The report states how many EXIF chunks remain. Identical `IDAT` data does not guarantee identical display if orientation metadata is removed. The tool does not redact visible text, inspect every ancillary chunk, detect sensitive information, understand every editor's format or certify a file as private. Unknown ancillary chunks are retained and disclosed. Some color/profile chunks can themselves contain descriptive data and are also retained.
 
 Limits bound decompression and displayed text. An undecodable text entry is reported and can still be removed. All file/scene text is displayed as text, never HTML. [Detailed behavior and limits](docs/scope.md).
 
@@ -44,6 +46,7 @@ Limits bound decompression and displayed text. An undecodable text entry is repo
 
 - Core tests cover CRC/framing failures, supported scene envelopes, Unicode text, compression limits, unknown chunks, repeated cleaning and reports that exclude metadata values.
 - Real-browser tests exercise both HTTP and `file://`, downloads and reinspection, pixel comparison, rendered script payloads, English/Chinese and mobile overflow.
+- Orientation regression checks cover all eight EXIF orientations in both TIFF byte orders, default retention and explicit removal. v0.1.0 removed EXIF automatically; a real Chromium reproduction showed a rotated PNG changing display orientation despite identical `IDAT` bytes. v0.1.1 makes that removal optional and reports the retained data.
 - Compatibility was checked against Excalidraw's public `test_embedded_v1.png`, `smiley_embedded_v2.png` and plain `smiley.png`, pinned to commit `bee01e3a12812c930109aa91242658709480bbf3`. Both embedded scenes decoded; cleaning preserved their `IDAT` data. Those files are not redistributed here.
 
 These are implementation checks, not evidence of broad user adoption or exhaustive format compatibility. Generic metadata cleaners already exist; this preview focuses on readable scene text and verifiable PNG chunk removal.

@@ -46,6 +46,7 @@ async function pixels(page) {
       assert.match(await page.locator('.scene-text').textContent(), /Synthetic note outside/);
       const before = await pixels(page);
       if(mode === 'http') await page.screenshot({ path:path.join(run,'desktop-original.png'), fullPage:true });
+      if(mode === 'http') await page.screenshot({path:path.join(run,'inspection.jpg'),type:'jpeg',quality:88,fullPage:true});
       if(mode === 'http' && process.env.PNG_CHECK_UPDATE_SCREENSHOTS === '1') await page.screenshot({path:path.join(root,'assets','inspection.jpg'), type:'jpeg', quality:88, fullPage:true});
       await page.locator('#clean').click();
       await page.locator('#download:enabled').waitFor();
@@ -76,6 +77,7 @@ async function pixels(page) {
       assert.equal(await page.locator('html').getAttribute('lang'), 'zh-CN'); assert.match(await page.locator('#clean').textContent(), /移除/);
       await page.locator('#demo').click(); await page.locator('#clean:enabled').waitFor();
       if(mode === 'http') await page.screenshot({path:path.join(run,'desktop-zh.png'), fullPage:true});
+      if(mode === 'http') await page.screenshot({path:path.join(run,'inspection-zh.jpg'),type:'jpeg',quality:88,fullPage:true});
       if(mode === 'http' && process.env.PNG_CHECK_UPDATE_SCREENSHOTS === '1') await page.screenshot({path:path.join(root,'assets','inspection-zh.jpg'), type:'jpeg', quality:88, fullPage:true});
       await page.setViewportSize({width:390, height:844});
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth <= window.innerWidth), true);

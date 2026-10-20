@@ -16,7 +16,7 @@
 <body>
   <header class="topbar">
     <a class="brand" href="./"><svg viewBox="0 0 36 40" aria-hidden="true"><path d="M3 2h21l9 9v27H3z"/><path d="M23 2v10h10M10 23h16M10 29h10"/></svg><span>PNG Share Check<small data-i18n="brandNote">By LydiaTools</small></span></a>
-    <nav aria-label="Main"><a href="https://github.com/LydiaTools/png-share-check" target="_blank" rel="noopener noreferrer">GitHub</a><button id="language" class="quiet" type="button" aria-label="Switch to Chinese">中文</button></nav>
+    <nav aria-label="Main"><a href="https://github.com/LydiaTools/png-share-check" target="_blank" rel="noopener noreferrer">GitHub</a><button id="language" class="quiet" type="button" aria-label="Switch to Chinese">Chinese</button></nav>
   </header>
   <main>
     <section class="intro" aria-labelledby="headline">
@@ -43,10 +43,14 @@
         <div id="tabs" class="tabs" role="group" aria-label="Choose file version" hidden><button id="original-tab" type="button" aria-pressed="true" data-i18n="original">Original</button><button id="clean-tab" type="button" aria-pressed="false" disabled data-i18n="cleaned">Cleaned copy</button></div>
         <div id="findings" class="findings"><p class="placeholder" data-i18n="findingsEmpty">The preview checks PNG text chunks and EXIF, and reads supported Excalidraw scenes.</p></div>
         <div id="actions" class="actions" hidden>
+          <div id="exif-options" class="exif-options" hidden>
+            <label><input id="remove-exif" type="checkbox" aria-describedby="exif-note"><span data-i18n="removeExif">Also remove EXIF</span></label>
+            <p id="exif-note" data-i18n="exifNote">EXIF can control image orientation. Keep this unchecked to retain it; EXIF may contain other information too.</p>
+          </div>
           <button id="clean" class="primary" type="button" data-i18n="clean">Remove text metadata</button>
           <button id="download" class="primary" type="button" hidden data-i18n="download">Download cleaned PNG</button>
           <button id="report" class="text-button" type="button" hidden data-i18n="report">Download verification report</button>
-          <p data-i18n="scope">Removes text chunks, EXIF and trailing bytes. Other chunks and visible pixels remain.</p>
+          <p data-i18n="scope">Removes text chunks and trailing bytes. EXIF removal is optional; other chunks and image data are retained.</p>
         </div>
       </div>
     </section>

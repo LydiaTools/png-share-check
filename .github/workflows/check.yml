@@ -15,7 +15,7 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
-      - name: Diagnose PNG EXIF orientation before and after cleaning
+      - name: Verify EXIF preservation and explicit removal
         run: node tests/orientation-probe.cjs
       - run: node scripts/package.cjs
       - run: npm run test:browser

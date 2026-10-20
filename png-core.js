@@ -3,7 +3,7 @@ function PNGShareFactory() {
   'use strict';
   const LIMITS = Object.freeze({ file: 12 * 1024 * 1024, pixels: 12000000, chunks: 2048, expanded: 1024 * 1024, totalExpanded: 4 * 1024 * 1024, entries: 128 });
   const signature = [137, 80, 78, 71, 13, 10, 26, 10];
-  const removable = new Set(['tEXt', 'zTXt', 'iTXt', 'eXIf']);
+  const removable = new Set(['tEXt', 'zTXt', 'iTXt']);
   const known = new Set(['IHDR', 'PLTE', 'IDAT', 'IEND', 'tRNS', 'cHRM', 'gAMA', 'iCCP', 'sBIT', 'sRGB', 'cICP', 'mDCV', 'cLLI', 'bKGD', 'hIST', 'pHYs', 'sPLT', 'tIME', 'tEXt', 'zTXt', 'iTXt', 'eXIf']);
   const table = new Uint32Array(256);
   for (let n = 0; n < 256; n++) {
@@ -186,13 +186,17 @@ function PNGShareFactory() {
       imageDataHash: await hash(idat), fileHash: await hash(parsed.data)
     };
   }
-  async function clean(input) {
+  async function clean(input, options = {}) {
+    if (!options || typeof options !== 'object' || (options.removeExif !== undefined && typeof options.removeExif !== 'boolean')) fail('Invalid cleaning choices.');
+    const removeExif = options.removeExif === true;
+    const selected = type => removable.has(type) || (removeExif && type === 'eXIf');
     const parsed = scan(input);
-    const output = concat([parsed.data.subarray(0, 8), ...parsed.chunks.filter(c => !removable.has(c.type)).map(c => parsed.data.subarray(c.start, c.end))]);
+    const output = concat([parsed.data.subarray(0, 8), ...parsed.chunks.filter(c => !selected(c.type)).map(c => parsed.data.subarray(c.start, c.end))]);
     const before = await inspect(parsed.data), after = await inspect(output);
+    before.chunks = before.chunks.map(c => ({ ...c, removedByCleaning:selected(c.type) }));
     if (before.imageDataHash !== after.imageDataHash) fail('Image data verification failed. No download was created.');
     return { bytes: output, before, after, removedChunks: before.chunks.filter(c => c.removedByCleaning).map(c => c.type),
-      removedTrailingBytes: before.trailingBytes, imageDataUnchanged: true };
+      removedTrailingBytes: before.trailingBytes, imageDataUnchanged: true, removeExif };
   }
   function report(result) {
     function summary(r) {
@@ -201,10 +205,10 @@ function PNGShareFactory() {
         supportedSceneCount: r.scenes.length, unknownChunksRetained: r.unknownChunks,
         fileSha256: r.fileHash, compressedImageDataSha256: r.imageDataHash };
     }
-    return { tool: 'PNG Share Check', version: '0.1.0', before: summary(result.before), after: summary(result.after),
+    return { tool: 'PNG Share Check', version: '0.1.1', before: summary(result.before), after: summary(result.after),
       imageDataUnchanged: result.imageDataUnchanged, removedChunks: result.removedChunks,
-      removedTrailingBytes: result.removedTrailingBytes,
-      scope: 'Removes tEXt, zTXt, iTXt, eXIf and bytes after IEND. Other chunks and visible pixels remain. Does not certify privacy.' };
+      removedTrailingBytes: result.removedTrailingBytes, choices: { removeExif:result.removeExif === true },
+      scope: 'Removes tEXt, zTXt, iTXt and bytes after IEND. EXIF removal is optional and may change displayed orientation. Retained chunks and compressed image data are copied exactly. Does not certify privacy.' };
   }
   return { LIMITS, crc32, scan, inspect, clean, report, hash, concat };
 }

@@ -12,6 +12,15 @@ function chunk(type, payload) {
 function insert(png, type, payload) {
   return Buffer.concat([png.subarray(0, png.length - 12), chunk(type, payload), png.subarray(png.length - 12)]);
 }
+function exifOrientationPayload(orientation, littleEndian = true) {
+  if (!Number.isInteger(orientation) || orientation < 1 || orientation > 8) throw new Error('Expected an EXIF orientation from 1 to 8.');
+  const payload = Buffer.alloc(26);
+  payload.write(littleEndian ? 'II' : 'MM', 0, 'ascii');
+  const short = (value, offset) => littleEndian ? payload.writeUInt16LE(value, offset) : payload.writeUInt16BE(value, offset);
+  const long = (value, offset) => littleEndian ? payload.writeUInt32LE(value, offset) : payload.writeUInt32BE(value, offset);
+  short(42, 2); long(8, 4); short(1, 8); short(0x112, 10); short(3, 12); long(1, 14); short(orientation, 18);
+  return payload;
+}
 function makePng(width = 960, height = 600) {
   const data = Buffer.alloc(height * (width * 4 + 1));
   const colors = { bg: [244, 249, 251, 255], paper: [255, 255, 255, 255], ink: [28, 47, 57, 255], blue: [185, 224, 242, 255], accent: [219, 85, 64, 255] };
@@ -48,4 +57,4 @@ function writeSamples() {
   fs.writeFileSync(path.join(folder, 'demo.js'), "globalThis.PNG_SHARE_DEMO_BASE64 = '" + withScene.toString('base64') + "';\n");
 }
 if (require.main === module) writeSamples();
-module.exports = { chunk, insert, makePng, scenePayload, writeSamples };
+module.exports = { chunk, insert, makePng, scenePayload, exifOrientationPayload, writeSamples };
