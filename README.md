@@ -19,6 +19,8 @@ The demo image says “Draft” and “Share.” Its embedded scene also contain
 
 EXIF is retained by default, including its orientation and any other information. If your file has EXIF, **Also remove EXIF** is an explicit choice. Removing it can rotate or mirror the displayed picture; compare the original and cleaned previews before sharing.
 
+To reproduce that difference, open [`samples/diagram-with-exif.png`](samples/diagram-with-exif.png) in the app. It is also included in the offline ZIP.
+
 No sign-up, API key, AI model or build step. Image processing runs in your tab. The app contains no analytics or upload endpoint. The hosted page still loads its static files from GitHub Pages; use the offline ZIP if you want to disconnect completely.
 
 ## What it does

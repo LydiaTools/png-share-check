@@ -53,6 +53,8 @@ function writeSamples() {
   const withScene = insert(plain, 'tEXt', scenePayload(['Draft', 'Share', 'Synthetic note outside the exported view: review launch timing.']));
   fs.writeFileSync(path.join(folder, 'diagram-with-scene.png'), withScene);
   fs.writeFileSync(path.join(folder, 'diagram-pixels-only.png'), plain);
+  const oriented = Buffer.concat([plain.subarray(0,33), chunk('eXIf', exifOrientationPayload(6)), plain.subarray(33)]);
+  fs.writeFileSync(path.join(folder, 'diagram-with-exif.png'), insert(oriented, 'tEXt', Buffer.from('Comment\0Synthetic orientation note')));
   // A local script tag makes the sample available directly from file://, without fetch.
   fs.writeFileSync(path.join(folder, 'demo.js'), "globalThis.PNG_SHARE_DEMO_BASE64 = '" + withScene.toString('base64') + "';\n");
 }

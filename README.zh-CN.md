@@ -19,6 +19,8 @@
 
 默认保留 EXIF，包括其中的方向及其他信息。文件含有 EXIF 时，可主动勾选「同时移除 EXIF」；移除后图片显示方向可能旋转或镜像，分享前可切换原文件与副本对比。
 
+想复现这个差异，可在工具中打开 [`samples/diagram-with-exif.png`](samples/diagram-with-exif.png)，离线 ZIP 也包含此原创合成样本。
+
 无需账号、API Key、AI 模型或构建。图片处理在当前标签页内完成，应用没有统计代码或上传接口。在线版仍会从 GitHub Pages 加载静态文件；需要完全断网时，请下载 ZIP，解压后打开 `index.html`。中英文界面都在同一个包里。
 
 ## 能做什么
