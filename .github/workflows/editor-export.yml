@@ -1,0 +1,31 @@
+name: Official editor export experiment
+on:
+  workflow_dispatch:
+  push:
+    branches: [verify-editor-export]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Install the exact upstream SDK in an isolated temporary directory
+        run: npm install --prefix "$RUNNER_TEMP/png-editor-sdk" --no-audit --no-fund --save-exact @excalidraw/excalidraw@0.18.1 react@19.0.0 react-dom@19.0.0 esbuild@0.25.5
+      - name: Export an original frame and inspect the actual PNG
+        run: node tests/editor-export.cjs
+        env:
+          PNG_EDITOR_SDK_DIR: ${{ runner.temp }}/png-editor-sdk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: editor-export-evidence
+          path: runs/editor-export/
+          retention-days: 7
