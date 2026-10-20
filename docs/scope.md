@@ -34,6 +34,8 @@ This is a case where a matching compressed-data hash is narrower evidence than a
 
 The JSON report contains counts, sizes, chunk types and hashes; no filenames, keyword names, scene text or metadata values. Hashes identify files and can still be correlatable; review the report before sharing it.
 
+Report width/height values are the stored IHDR dimensions. The image preview labels use the browser's decoded dimensions, including its EXIF orientation handling.
+
 ## Compatibility evidence
 
 Public official fixtures, checked privately on 2026-10-21 Asia/Shanghai:

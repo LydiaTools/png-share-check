@@ -83,7 +83,7 @@
   function displayImage(url, token) {
     return new Promise((resolve, reject) => {
       const probe = new Image(); const timer = setTimeout(() => reject(new Error(t('imageError'))), 8000);
-      probe.onload = () => { clearTimeout(timer); if (token !== job) return reject(new Error('Cancelled')); resolve(); };
+      probe.onload = () => { clearTimeout(timer); if (token !== job) return reject(new Error('Cancelled')); resolve({width:probe.naturalWidth,height:probe.naturalHeight}); };
       probe.onerror = () => { clearTimeout(timer); reject(new Error(t('imageError'))); }; probe.src = url;
     });
   }
@@ -102,9 +102,9 @@
       const buffer = await file.arrayBuffer();
       const inspection = await work('inspect', buffer, token);
       previewURL = urlFor(buffer);
-      await displayImage(previewURL, token);
+      const originalDimensions = await displayImage(previewURL, token);
       if (token !== job) return;
-      const previous = state; state = { name:file.name, buffer, inspection, originalURL:previewURL, result:null, sample }; cleaned = false;
+      const previous = state; state = { name:file.name, buffer, inspection, originalURL:previewURL, originalDimensions, result:null, sample }; cleaned = false;
       $('remove-exif').checked = false;
       if (previous) for (const url of [previous.originalURL, previous.cleanURL]) if (url) { URL.revokeObjectURL(url); urls.delete(url); }
       render(); setStatus(sample ? 'sample' : 'ready');
@@ -116,7 +116,8 @@
     const r = cleaned ? state.result.after : state.inspection;
     $('empty').hidden = true; $('image').hidden = false; $('image').src = cleaned ? state.cleanURL : state.originalURL;
     $('image').alt = state.sample ? (lang === 'en' ? 'Synthetic diagram: Draft connected to Share' : '合成示例图：草稿连接到分享') : (lang === 'en' ? 'Selected PNG preview' : '所选 PNG 图片预览');
-    $('dimensions').textContent = `${r.width} × ${r.height}`;
+    const dimensions = cleaned ? state.cleanDimensions : state.originalDimensions;
+    $('dimensions').textContent = `${dimensions.width} × ${dimensions.height}`;
     $('filename').textContent = cleaned ? cleanName(state.name) : state.name;
     $('forget').hidden = false; $('summary').textContent = t('count')(r);
     $('tabs').hidden = false; $('actions').hidden = false;
@@ -170,7 +171,7 @@
   $('clean-tab').onclick = () => { if (state?.result && !busy) { cleaned = true; render(); } };
   $('clean').onclick = async () => {
     if (!state || busy) return; const token = job; lock(true); setStatus('cleaning');
-    try { const result = await work('clean', state.buffer, token, {removeExif:$('remove-exif').checked}); const cleanURL = urlFor(result.bytes); await displayImage(cleanURL, token); if (token !== job) return; state.result = result; state.cleanURL = cleanURL; cleaned = true; render(); setStatus('done'); }
+    try { const result = await work('clean', state.buffer, token, {removeExif:$('remove-exif').checked}); const cleanURL = urlFor(result.bytes); const cleanDimensions = await displayImage(cleanURL, token); if (token !== job) return; state.result = result; state.cleanURL = cleanURL; state.cleanDimensions = cleanDimensions; cleaned = true; render(); setStatus('done'); }
     catch(err) { if (token === job) setStatus(err.message, true, true); } finally { if (token === job) lock(false); }
   };
   $('remove-exif').onchange = () => {

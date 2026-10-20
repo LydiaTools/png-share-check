@@ -39,21 +39,30 @@ async function raster(page) {
       const input = makeOriented(orientation, littleEndian);
       await page.locator('#file').setInputFiles({ name:`synthetic-orientation-${label}.png`, mimeType:'image/png', buffer:input });
       await page.locator('#clean:enabled').waitFor(); const before = await raster(page);
+      assert.equal(await page.locator('#dimensions').textContent(), `${before.width} × ${before.height}`);
       assert.equal(await page.locator('#remove-exif').isChecked(), false);
       await page.locator('#clean').click(); await page.locator('#download:enabled').waitFor(); const defaultAfter = await raster(page);
       assert.deepEqual(defaultAfter, before);
+      assert.equal(await page.locator('#dimensions').textContent(), `${defaultAfter.width} × ${defaultAfter.height}`);
       await page.getByRole('heading', {name:'EXIF retained'}).waitFor();
       const cleaned = await core.clean(input);
       assert.equal(cleaned.after.exifCount, 1); assert.equal(cleaned.after.textCount, 0);
       await page.locator('#proof').evaluate(el=>el.open=true);
       assert.match(await page.locator('#proof-body').textContent(), /0 text chunks, 1 EXIF chunks, 0 trailing bytes/);
-      if (label === '6-le') await page.screenshot({path:path.join(out,'exif-retained.jpg'),type:'jpeg',quality:88,fullPage:true});
+      if (label === '6-le') {
+        await page.screenshot({path:path.join(out,'exif-retained.jpg'),type:'jpeg',quality:88,fullPage:true});
+        const event = page.waitForEvent('download'); await page.locator('#download').click(); const download = await event;
+        const file = path.join(out,'exif-retained-download.png'); await download.saveAs(file);
+        assert.deepEqual(fs.readFileSync(file),Buffer.from(cleaned.bytes));
+        const inspection = await core.inspect(fs.readFileSync(file)); assert.equal(inspection.exifCount,1); assert.equal(inspection.textCount,0);
+      }
       await page.locator('#remove-exif').check();
       assert.equal(await page.locator('#download').isVisible(), false);
       await page.locator('#clean:enabled').waitFor();
       await page.locator('#clean').click(); await page.locator('#download:enabled').waitFor(); const removeExifAfter = await raster(page);
       await page.getByText('EXIF removed. Image orientation may differ; compare the Original tab before sharing.', {exact:true}).waitFor();
       assert.equal(removeExifAfter.width, 960); assert.equal(removeExifAfter.height, 600);
+      assert.equal(await page.locator('#dimensions').textContent(), `${removeExifAfter.width} × ${removeExifAfter.height}`);
       const explicit = await core.clean(input, {removeExif:true}); assert.equal(explicit.after.exifCount, 0);
       if (label === '6-le') {
         assert.notDeepEqual(removeExifAfter, before);
