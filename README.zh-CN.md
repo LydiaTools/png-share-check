@@ -10,6 +10,8 @@
 
 示例图只画了 Draft 和 Share，但它的编辑场景里还保存了一条合成说明。左边看画面，右边看数据，再决定下载什么。
 
+**还可亲自检查真实 SDK 导出：** 用官方 Excalidraw 0.18.1 SDK 导出原创 Frame，画面显示两行文字，开启嵌入场景后，场景数据还保存了框外的一行合成说明。改变这一行，可见像素仍完全一致。[下载实际 PNG、源场景并复现](https://github.com/LydiaTools/png-share-check/blob/main/docs/editor-export.md#中文)。实验限定为主动开启场景嵌入的 SDK 导出。
+
 ## 一分钟试用
 
 1. 打开工具，点击「试用示例 PNG」，也可打开自己的静态 PNG。

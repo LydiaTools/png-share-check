@@ -10,6 +10,8 @@ PNG Share Check reads embedded editing data in PNG exports, shows supported Exca
 
 The demo image says “Draft” and “Share.” Its embedded scene also contains a synthetic note that isn't drawn in the image. You can see both before choosing what to download.
 
+**Try a real SDK export:** an original Frame exported by the official Excalidraw 0.18.1 SDK shows two lines, while its embedded scene retains a synthetic line below the frame. Changing that last line left the rendered pixels identical. [Download the PNG, inspect it, and reproduce the experiment](https://github.com/LydiaTools/png-share-check/blob/main/docs/editor-export.md). This tests the SDK with scene embedding explicitly enabled.
+
 ## Try it in a minute
 
 1. Open the app and select **Try the demo PNG**, or open your own static PNG.

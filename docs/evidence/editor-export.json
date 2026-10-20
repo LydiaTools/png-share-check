@@ -1,0 +1,108 @@
+{
+  "runId": 39479539874,
+  "runUrl": "https://github.com/LydiaTools/png-share-check/actions/runs/39479539874",
+  "testSourceCommit": "30edd55fa386b87ea16bcfe684be3df08e25f445",
+  "testScriptSha256": "f4d7f837df5e010b5b4d553f5e77c72b93548c68f06e3600f62e76c162269f76",
+  "sdkLockSha256": "9a297099918e2196f770d0b5961917140767c054260beae3fa4b4ee68fb8b7a8",
+  "files": [
+    {
+      "path": "samples/editor-frame-embedded.png",
+      "bytes": 10686,
+      "sha256": "bcac376f6ace77b311ea06fe50b5834a5eba6d73a022345a8337e8b187f829df"
+    },
+    {
+      "path": "samples/editor-frame-without-text.png",
+      "bytes": 9655,
+      "sha256": "5ddfc0118ef9510a4dd3fb18ab937b6b7fd5f2f3bfd6100b6999ba1b601e3e74"
+    },
+    {
+      "path": "samples/editor-frame.excalidraw",
+      "bytes": 2026,
+      "sha256": "20d4af11a0d2555f1aea2925c051c2a997aca5db8a94bcca70a3676d970df33c"
+    },
+    {
+      "path": "assets/editor-frame-inspection.jpg",
+      "bytes": 165913,
+      "sha256": "32e665a5d3f374a883e6ea88fd4c38d8d5f08884ef29c9140e00fb344ac711c4"
+    }
+  ],
+  "result": {
+    "completed": true,
+    "createdAt": "2026-10-20T19:00:21.205Z",
+    "sdk": {
+      "name": "@excalidraw/excalidraw",
+      "version": "0.18.1",
+      "integrity": "sha512-6i5Gt7IDTOH//qa0Z315Ly5iVRhjWpu2whrlQFqkuwrkKUWgRsMk0P5qdE7bpyDpai7jeLeWYkyj1eVAfni1lw=="
+    },
+    "browser": "151.0.7922.34",
+    "cases": [
+      {
+        "name": "frame-embedded",
+        "bytes": 10686,
+        "rendered": {
+          "width": 560,
+          "height": 200,
+          "rgbaSha256": "05502d800f51737b84ba3fe2f9f6f5557ba4222091209525248e610fe6e99d96"
+        },
+        "sceneCount": 1,
+        "sceneTexts": [
+          "Public plan\nShare the picture\n\n\n\n\n\nSYNTHETIC NOTE: internal draft"
+        ],
+        "frame": {
+          "id": "public-frame",
+          "x": 100,
+          "y": 100,
+          "width": 560,
+          "height": 200
+        }
+      },
+      {
+        "name": "frame-alternate-note",
+        "bytes": 10645,
+        "rendered": {
+          "width": 560,
+          "height": 200,
+          "rgbaSha256": "05502d800f51737b84ba3fe2f9f6f5557ba4222091209525248e610fe6e99d96"
+        },
+        "sceneCount": 1,
+        "sceneTexts": [
+          "Public plan\nShare the picture\n\n\n\n\n\nSYNTHETIC NOTE: alternate draft"
+        ],
+        "frame": {
+          "id": "public-frame",
+          "x": 100,
+          "y": 100,
+          "width": 560,
+          "height": 200
+        }
+      },
+      {
+        "name": "frame-no-embed",
+        "bytes": 9655,
+        "rendered": {
+          "width": 560,
+          "height": 200,
+          "rgbaSha256": "05502d800f51737b84ba3fe2f9f6f5557ba4222091209525248e610fe6e99d96"
+        },
+        "sceneCount": 0,
+        "sceneTexts": [],
+        "frame": {
+          "id": "public-frame",
+          "x": 100,
+          "y": 100,
+          "width": 560,
+          "height": 200
+        }
+      }
+    ],
+    "lastLineChangedButRgbaIdentical": true,
+    "embedOnOffRgbaIdentical": true,
+    "actualUiDownloadMatchesCore": true,
+    "cleanedRgbaUnchanged": true,
+    "remainingTextChunks": 0,
+    "remainingScenes": 0,
+    "scope": "Actual official npm SDK exportToBlob with two supplied elements and exportingFrame; original synthetic content; embed scene explicitly on. This does not test the hosted editor UI or prove its selection behavior.",
+    "externalRequests": 0,
+    "pageErrors": 0
+  }
+}
